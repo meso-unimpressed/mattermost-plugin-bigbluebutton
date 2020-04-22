@@ -1,3 +1,16 @@
+# About this fork
+
+This fork includes integration to [bbb_joiner](https://github.com/meso-unimpressed/bbb_joiner) to
+provide and display external join links that allow mattermost users to join in
+from mobile clients and invite external participants to the created room.
+
+To ensure the conference can be joined from the join link returned from
+bbb_joiner the conference has to be created as soon as a user initiates it from
+this plugin (the upstream version creates the conference only after a user
+clicks on the join button). Make sure to set the BBB config variable
+`meetingExpireIfNoUserJoinedInMinutes` in `bigbluebutton.properties` to a high
+enough value to give users enough time to join the meeting.
+
 # Note
 We have updated the Mattermost plugin. Only versions 2.1.0 and above will work with the default BigBlueButton server credentials.
 
