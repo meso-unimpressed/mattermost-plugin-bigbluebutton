@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"strings"
 	"sync/atomic"
+	"time"
 
 	"github.com/blindsidenetworks/mattermost-plugin-bigbluebutton/server/mattermost"
 
@@ -96,6 +97,13 @@ func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*mo
 	if err := p.PopulateMeeting(meetingpointer, nil, ""); err != nil {
 		return nil, model.NewAppError("ExecuteCommand", "Please provide a 'Site URL' in Settings > General > Configuration", nil, err.Error(), http.StatusInternalServerError)
 	}
+
+	bbbAPI.CreateMeeting(meetingpointer)
+	meetingpointer.Created = true
+	var fullMeetingInfo dataStructs.GetMeetingInfoResponse
+	bbbAPI.GetMeetingInfo(meetingpointer.MeetingID_, meetingpointer.ModeratorPW_, &fullMeetingInfo) // this is used to get the InternalMeetingID
+	meetingpointer.InternalMeetingId = fullMeetingInfo.InternalMeetingID
+	meetingpointer.CreatedAt = time.Now().Unix()
 
 	p.createStartMeetingPost(args.UserId, args.ChannelId, meetingpointer)
 	p.Meetings = append(p.Meetings, *meetingpointer)
