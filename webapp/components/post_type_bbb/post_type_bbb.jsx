@@ -263,8 +263,13 @@ export default class PostTypebbb extends React.PureComponent {
           }
           &emsp;&emsp;
           <span>
+            <span style={style.summary}>Internal join link: </span>
+            <span style={style.summaryItem}>{props.moderator_join_link}</span>
+          </span>
+          &emsp;&emsp;
+          <span>
             <span style={style.summary}>External join link: </span>
-            <span style={style.summaryItem}>{props.join_link}</span>
+            <span style={style.summaryItem}>{props.normal_join_link}</span>
           </span>
         </div>
         <span >

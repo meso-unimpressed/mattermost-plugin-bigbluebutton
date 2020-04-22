@@ -45,24 +45,35 @@ func SetAPI(url string, tokenParam string) {
 	joinToken = tokenParam
 }
 
-//CreateJoinLink creates A join link to a meeting
-func CreateJoinLink(meetingRoom *dataStructs.MeetingRoom) (string, error) {
+//CreateJoinLinks creates join links to a meeting
+func CreateJoinLinks(meetingRoom *dataStructs.MeetingRoom) (string, string, error) {
 	if meetingRoom.MeetingID_ == "" {
-		return "", errors.New("meeting ID cannot be empty")
+		return "", "", errors.New("meeting ID cannot be empty")
 	}
 
 	if meetingRoom.AttendeePW_ == "" {
-		return "", errors.New("attendee PW cannot be empty")
+		return "", "", errors.New("attendee PW cannot be empty")
 	}
 
-	request := Request{meetingRoom.MeetingID_, meetingRoom.AttendeePW_}
 	var response Response
+
+	request := Request{meetingRoom.MeetingID_, meetingRoom.AttendeePW_}
 	err := helpers.HttpPost(joinBaseUrl + "link", request, &response, joinToken)
 
 	if err != nil {
 		mattermost.API.LogError(fmt.Sprintf("ERROR: HTTP ERROR: %v", err))
-		return "", err
+		return "", "", err
 	}
 
-	return joinBaseUrl + response.LinkID, nil
+	normalJoinLink := joinBaseUrl + response.LinkID
+
+	request.Password = meetingRoom.ModeratorPW_
+	err = helpers.HttpPost(joinBaseUrl + "link", request, &response, joinToken)
+
+	if err != nil {
+		mattermost.API.LogError(fmt.Sprintf("ERROR: HTTP ERROR: %v", err))
+		return normalJoinLink, "", err
+	}
+
+	return normalJoinLink, joinBaseUrl + response.LinkID, nil
 }

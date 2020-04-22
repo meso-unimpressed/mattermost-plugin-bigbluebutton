@@ -125,27 +125,32 @@ func (p *Plugin) createStartMeetingPost(userId string, channelId string, m *data
 		return
 	}
 
-	joinLink, err := joinerAPI.CreateJoinLink(m);
+	normalJoinLink, moderatorJoinLink, err := joinerAPI.CreateJoinLinks(m);
 
 	if err != nil {
-		mattermost.API.LogError("Failed to create join link")
-	} else {
-		mattermost.API.LogInfo("Created join link " + joinLink)
+		mattermost.API.LogError("Failed to create join links")
 	}
 
-	textPost := &model.Post{UserId: userId, ChannelId: channelId,
-		Message: "#BigBlueButton #" + m.Name_ + " #ID" + m.MeetingID_ + " " + joinLink, Type: "custom_bbb"}
+	textPost := &model.Post{
+		UserId: userId,
+		ChannelId: channelId,
+		Message: "#BigBlueButton #" + m.Name_ + " #ID" + m.MeetingID_ +
+			" Join as moderator: " + moderatorJoinLink +
+			" Join as normal user: " + normalJoinLink,
+		Type: "custom_bbb",
+	}
 
 	textPost.Props = model.StringInterface{
-		"from_webhook":      "true",
-		"override_username": "BigBlueButton",
-		"override_icon_url": "https://pbs.twimg.com/profile_images/467451035837923328/JxPpOTL6_400x400.jpeg",
-		"meeting_id":        m.MeetingID_,
-		"meeting_status":    "STARTED",
-		"meeting_personal":  false,
-		"meeting_topic":     m.Name_, // Fill in this meeting topic.
-		"meeting_desc":      m.Meta,
-		"join_link":         joinLink,
+		"from_webhook":        "true",
+		"override_username":   "BigBlueButton",
+		"override_icon_url":   "https://pbs.twimg.com/profile_images/467451035837923328/JxPpOTL6_400x400.jpeg",
+		"meeting_id":          m.MeetingID_,
+		"meeting_status":      "STARTED",
+		"meeting_personal":    false,
+		"meeting_topic":       m.Name_, // Fill in this meeting topic.
+		"meeting_desc":        m.Meta,
+		"normal_join_link":    normalJoinLink,
+		"moderator_join_link": moderatorJoinLink,
 		"user_count":        0,
 	}
 
