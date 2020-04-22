@@ -26,6 +26,7 @@ import (
 	"github.com/blindsidenetworks/mattermost-plugin-bigbluebutton/server/mattermost"
 
 	bbbAPI "github.com/blindsidenetworks/mattermost-plugin-bigbluebutton/server/bigbluebuttonapiwrapper/api"
+	joinerAPI "github.com/blindsidenetworks/mattermost-plugin-bigbluebutton/server/joinerapiwrapper/api"
 	"github.com/blindsidenetworks/mattermost-plugin-bigbluebutton/server/bigbluebuttonapiwrapper/dataStructs"
 	"github.com/mattermost/mattermost-server/model"
 	"github.com/mattermost/mattermost-server/plugin"
@@ -71,6 +72,7 @@ func (p *Plugin) OnActivate() error {
 	}
 
 	bbbAPI.SetAPI(config.BaseURL+"/", config.Secret)
+	joinerAPI.SetAPI(config.JoinerURL+"/", config.JoinerToken)
 
 	//every 2 minutes, look through active meetings and check if recordings are done
 	p.c = cron.New()

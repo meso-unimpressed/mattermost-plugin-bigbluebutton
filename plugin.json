@@ -23,8 +23,22 @@
         "type": "text",
         "default": "8cd8ef52e8e101574e400365b55e11a6",
         "help_text": "The secret you generated to securely connect to your BigBlueButton. Default for test-install is: 8cd8ef52e8e101574e400365b55e11a6\n"
+      },
+      {
+        "key": "JOINER_URL",
+        "display_name": "Joiner URL",
+        "type": "text",
+        "default": "https://example.com/join",
+        "help_text": "Enter the root url to your bbb joiner instance\n"
+      },
+      {
+        "key": "JOINER_TOKEN",
+        "display_name": "Joiner Token",
+        "type": "text",
+        "default": "8cd8ef52e8e101574e400365b55e11a6",
+        "help_text": "Enter the access token for your bbb joiner instance\n"
       }
     ],
-    "footer": "All form fields must be filled or the plugin will fail to work. Deactivate and reactivate your plugin when changing to a configuration value. Don't worry, no data will be lost"
+    "footer": "The server url and secret must be filled or the plugin will fail to work. Deactivate and reactivate your plugin when changing to a configuration value. Don't worry, no data will be lost"
   }
 }

@@ -60,6 +60,13 @@ func (p *Plugin) handleCreateMeeting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	bbbAPI.CreateMeeting(meetingpointer)
+	meetingpointer.Created = true
+	var fullMeetingInfo dataStructs.GetMeetingInfoResponse
+	bbbAPI.GetMeetingInfo(meetingpointer.MeetingID_, meetingpointer.ModeratorPW_, &fullMeetingInfo) // this is used to get the InternalMeetingID
+	meetingpointer.InternalMeetingId = fullMeetingInfo.InternalMeetingID
+	meetingpointer.CreatedAt = time.Now().Unix()
+
 	//creates the start meeting post
 	p.createStartMeetingPost(request.UserId, request.ChannelId, meetingpointer)
 
@@ -97,16 +104,6 @@ func (p *Plugin) handleJoinMeeting(w http.ResponseWriter, r *http.Request) {
 		w.Write(userJson)
 		return
 	} else {
-		//check if meeting has actually been created and can be joined
-		if !meetingpointer.Created {
-			bbbAPI.CreateMeeting(meetingpointer)
-			meetingpointer.Created = true
-			var fullMeetingInfo dataStructs.GetMeetingInfoResponse
-			bbbAPI.GetMeetingInfo(meetingID, meetingpointer.ModeratorPW_, &fullMeetingInfo) // this is used to get the InternalMeetingID
-			meetingpointer.InternalMeetingId = fullMeetingInfo.InternalMeetingID
-			meetingpointer.CreatedAt = time.Now().Unix()
-		}
-
 		user, _ := p.API.GetUser(request.UserId)
 		username := user.Username
 

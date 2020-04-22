@@ -261,7 +261,11 @@ export default class PostTypebbb extends React.PureComponent {
               : <span style={style.summaryItemGreyItalics}>
                   &ensp; {attendees}</span>
           }
-
+          &emsp;&emsp;
+          <span>
+            <span style={style.summary}>External join link: </span>
+            <span style={style.summaryItem}>{props.join_link}</span>
+          </span>
         </div>
         <span >
           <a className='btn btn-lg btn-primary' style={style.button} onClick={this.getJoinURL}>

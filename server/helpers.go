@@ -21,7 +21,9 @@ import (
 	"errors"
 	"fmt"
 	bbbAPI "github.com/blindsidenetworks/mattermost-plugin-bigbluebutton/server/bigbluebuttonapiwrapper/api"
+	joinerAPI "github.com/blindsidenetworks/mattermost-plugin-bigbluebutton/server/joinerapiwrapper/api"
 	"github.com/blindsidenetworks/mattermost-plugin-bigbluebutton/server/bigbluebuttonapiwrapper/dataStructs"
+	"github.com/blindsidenetworks/mattermost-plugin-bigbluebutton/server/mattermost"
 	"github.com/mattermost/mattermost-server/model"
 	"github.com/segmentio/ksuid"
 	"net/url"
@@ -123,8 +125,16 @@ func (p *Plugin) createStartMeetingPost(userId string, channelId string, m *data
 		return
 	}
 
+	joinLink, err := joinerAPI.CreateJoinLink(m);
+
+	if err != nil {
+		mattermost.API.LogError("Failed to create join link")
+	} else {
+		mattermost.API.LogInfo("Created join link " + joinLink)
+	}
+
 	textPost := &model.Post{UserId: userId, ChannelId: channelId,
-		Message: "#BigBlueButton #" + m.Name_ + " #ID" + m.MeetingID_, Type: "custom_bbb"}
+		Message: "#BigBlueButton #" + m.Name_ + " #ID" + m.MeetingID_ + " " + joinLink, Type: "custom_bbb"}
 
 	textPost.Props = model.StringInterface{
 		"from_webhook":      "true",
@@ -135,6 +145,7 @@ func (p *Plugin) createStartMeetingPost(userId string, channelId string, m *data
 		"meeting_personal":  false,
 		"meeting_topic":     m.Name_, // Fill in this meeting topic.
 		"meeting_desc":      m.Meta,
+		"join_link":         joinLink,
 		"user_count":        0,
 	}
 

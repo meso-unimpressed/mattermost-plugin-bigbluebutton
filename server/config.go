@@ -24,6 +24,8 @@ import (
 type Configuration struct {
 	BaseURL string `json:"BASE_URL"`
 	Secret  string `json:"SALT"`
+	JoinerURL string `json:"JOINER_URL"`
+	JoinerToken string `json:"JOINER_TOKEN"`
 }
 
 func (p *Plugin) OnConfigurationChange() error {
@@ -32,7 +34,7 @@ func (p *Plugin) OnConfigurationChange() error {
 	err := p.API.LoadPluginConfiguration(&configuration)
 
 	configuration.BaseURL = strings.Trim(configuration.BaseURL, "/")
-	configuration.BaseURL = strings.Trim(configuration.BaseURL, " ")
+	configuration.JoinerURL = strings.Trim(configuration.JoinerURL, "/")
 
 	// stores the config in an Atomic.Value place
 	p.configuration.Store(&configuration)
